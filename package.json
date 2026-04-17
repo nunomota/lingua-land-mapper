@@ -1,0 +1,22 @@
+{
+  "name": "lingua-land-mapper",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/index.ts",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^1.x",
+    "ai": "^4.x",
+    "express": "^4.x",
+    "zod": "^3.x"
+  },
+  "devDependencies": {
+    "@types/express": "^4.x",
+    "@types/node": "^20.x",
+    "ts-node": "^10.x",
+    "typescript": "^5.x"
+  }
+}
