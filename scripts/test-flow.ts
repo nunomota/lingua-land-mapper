@@ -9,7 +9,7 @@ const PAYLOAD = {
   availableSprites: [
     { id: "grass", description: "Open green grass" },
     { id: "water", description: "Blue pond water" },
-    { id: "tree",  description: "Dense forest tree" },
+    { id: "dirt",  description: "Bare dirt ground" },
     { id: "sand",  description: "Sandy shore at water's edge" },
   ],
   dimensions: { width: 10, height: 10 },
@@ -18,7 +18,7 @@ const PAYLOAD = {
 const SPRITE_ICONS: Record<string, string> = {
   grass: "🟩",
   water: "🟦",
-  tree:  "🌲",
+  dirt:  "🟫",
   sand:  "🟨",
 };
 
