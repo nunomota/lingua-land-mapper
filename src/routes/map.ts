@@ -12,6 +12,7 @@ async function generateMap(
     query: string;
     availableSprites: { id: string; description: string }[];
     dimensions: { width: number; height: number };
+    smoothing?: "low" | "high";
   }
 ): Promise<void> {
   const emitter = registry.get(mapId);
@@ -20,7 +21,8 @@ async function generateMap(
   try {
     const { matrix, reasoning } = await generateGraph(
       params.query,
-      params.availableSprites
+      params.availableSprites,
+      params.smoothing
     );
 
     const matrixRecord: Record<string, Record<string, number>> = {};
@@ -56,7 +58,7 @@ router.post("/", (req: Request, res: Response) => {
     return;
   }
 
-  const { mapId, query, availableSprites, dimensions } = parsed.data;
+  const { mapId, query, availableSprites, dimensions, smoothing } = parsed.data;
 
   if (!registry.get(mapId)) {
     res.status(400).json({
@@ -74,6 +76,7 @@ router.post("/", (req: Request, res: Response) => {
       width: dimensions?.width ?? 15,
       height: dimensions?.height ?? 15,
     },
+    smoothing,
   });
 });
 

@@ -81,7 +81,8 @@ export class GraphGenError extends Error {
 
 export async function generateGraph(
   query: string,
-  availableSprites: Sprite[]
+  availableSprites: Sprite[],
+  smoothing?: "low" | "high"
 ): Promise<{ matrix: Map<string, Map<string, number>>; reasoning: string }> {
   const maxAttempts = 3;
   const messages: ModelMessage[] = [
@@ -108,6 +109,16 @@ export async function generateGraph(
       for (const t of object.transitions) {
         if (!rawMatrix.has(t.from)) rawMatrix.set(t.from, new Map());
         rawMatrix.get(t.from)!.set(t.to, t.weight);
+      }
+      if (smoothing) {
+        const allWeights = object.transitions.map((t) => t.weight).sort((a, b) => a - b);
+        const p = smoothing === "high" ? 0.5 : 0.25;
+        const threshold = allWeights[Math.floor(allWeights.length * p)] ?? 0;
+        for (const neighbours of rawMatrix.values()) {
+          for (const [to, weight] of neighbours) {
+            if (weight <= threshold) neighbours.set(to, 0);
+          }
+        }
       }
       const matrix = normaliseMatrix(rawMatrix);
       return { matrix, reasoning: object.reasoning };
