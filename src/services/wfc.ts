@@ -126,22 +126,37 @@ export async function runWFC({
     let collapsedCount = 0;
     let contradiction = false;
 
+    // Collapse a random seed cell to start
+    const seedX = Math.floor(Math.random() * width);
+    const seedY = Math.floor(Math.random() * height);
+    const seedCell = grid[seedY]![seedX]!;
+    const seedWeights = collapseWeights(seedCell, seedX, seedY, grid, width, height, matrix);
+    const seedSpriteId = weightedSample(seedCell.possibilities, seedWeights);
+    seedCell.collapsed = true;
+    seedCell.spriteId = seedSpriteId;
+    seedCell.possibilities = new Set([seedSpriteId]);
+    collapsedCount++;
+    emitter.emit("cell", { x: seedX, y: seedY, spriteId: seedSpriteId });
+
+    const frontierMap = new Map<string, { x: number; y: number }>();
+    for (const n of getNeighbours(seedX, seedY, width, height)) {
+      frontierMap.set(`${n.x},${n.y}`, n);
+    }
+
     while (collapsedCount < total) {
-      // Select cell with lowest entropy
+      // Select frontier cell with lowest entropy
       let minEntropy = Infinity;
       let candidates: { x: number; y: number }[] = [];
 
-      for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-          const cell = grid[y]![x]!;
-          if (cell.collapsed) continue;
-          const e = entropy(cell.possibilities, matrix) + Math.random() * 1e-6;
-          if (e < minEntropy) {
-            minEntropy = e;
-            candidates = [{ x, y }];
-          } else if (e === minEntropy) {
-            candidates.push({ x, y });
-          }
+      for (const { x, y } of frontierMap.values()) {
+        const cell = grid[y]![x]!;
+        if (cell.collapsed) continue;
+        const e = entropy(cell.possibilities, matrix) + Math.random() * 1e-6;
+        if (e < minEntropy) {
+          minEntropy = e;
+          candidates = [{ x, y }];
+        } else if (e === minEntropy) {
+          candidates.push({ x, y });
         }
       }
 
@@ -159,6 +174,15 @@ export async function runWFC({
       cell.possibilities = new Set([spriteId]);
       collapsedCount++;
       emitter.emit("cell", { x, y, spriteId });
+
+      // Update frontier
+      frontierMap.delete(`${x},${y}`);
+      for (const n of getNeighbours(x, y, width, height)) {
+        const key = `${n.x},${n.y}`;
+        if (!grid[n.y]![n.x]!.collapsed && !frontierMap.has(key)) {
+          frontierMap.set(key, n);
+        }
+      }
 
       // Propagate (BFS)
       const queue: { x: number; y: number }[] = getNeighbours(x, y, width, height);
