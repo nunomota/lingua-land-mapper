@@ -9,13 +9,66 @@ const PAYLOAD = {
   availableSprites: [
     { id: "grass", description: "Open green grass" },
     { id: "water", description: "Blue pond water" },
-    { id: "tree", description: "Dense forest tree" },
-    { id: "sand", description: "Sandy shore at water's edge" },
+    { id: "tree",  description: "Dense forest tree" },
+    { id: "sand",  description: "Sandy shore at water's edge" },
   ],
   dimensions: { width: 10, height: 10 },
 };
 
+const SPRITE_ICONS: Record<string, string> = {
+  grass: "🟩",
+  water: "🟦",
+  tree:  "🌲",
+  sand:  "🟨",
+};
+
+function logEvent(event: string, detail: string) {
+  console.log(`[event:${event}] ${detail}`);
+}
+
+function printMatrix(matrix: Record<string, Record<string, number>>) {
+  const sprites = Object.keys(matrix);
+  const colWidth = Math.max(...sprites.map((s) => s.length), 6) + 2;
+  const pad = (s: string) => s.padEnd(colWidth);
+
+  const header = pad("") + sprites.map(pad).join("");
+  console.log("\n  Transition matrix (row → col):");
+  console.log("  " + header);
+  console.log("  " + "─".repeat(header.length));
+
+  for (const from of sprites) {
+    const row = sprites
+      .map((to) => {
+        const w = matrix[from]?.[to] ?? 0;
+        return pad(w.toFixed(3));
+      })
+      .join("");
+    console.log(`  ${pad(from)}${row}`);
+  }
+  console.log();
+}
+
+function printMap(
+  grid: Record<string, string>,
+  width: number,
+  height: number
+) {
+  console.log("\n  Final map:\n");
+  for (let y = 0; y < height; y++) {
+    let row = "  ";
+    for (let x = 0; x < width; x++) {
+      const spriteId = grid[`${x},${y}`] ?? "?";
+      row += SPRITE_ICONS[spriteId] ?? `[${spriteId}]`;
+    }
+    console.log(row);
+  }
+  console.log();
+}
+
 async function main() {
+  const { width, height } = PAYLOAD.dimensions;
+  const grid: Record<string, string> = {};
+
   console.log(`\n[test-flow] mapId: ${MAP_ID}`);
   console.log(`[test-flow] Connecting to SSE stream...`);
 
@@ -49,17 +102,19 @@ async function main() {
         const payload = JSON.parse(data);
 
         if (event === "graph") {
-          console.log(`\n[graph] LLM reasoning: "${payload.reasoning}"`);
-          console.log(`[graph] Matrix built for sprites: [${Object.keys(payload.matrix).join(", ")}]`);
+          logEvent("graph", `reasoning: "${payload.reasoning}"`);
+          printMatrix(payload.matrix);
         } else if (event === "cell") {
-          process.stdout.write(`[cell] (${payload.x},${payload.y}) → ${payload.spriteId}\n`);
+          grid[`${payload.x},${payload.y}`] = payload.spriteId;
+          logEvent("cell", `(${payload.x}, ${payload.y}) → ${payload.spriteId}`);
         } else if (event === "restart") {
-          console.log(`\n[restart] Contradiction — attempt ${payload.attempt}/${payload.maxRetries}`);
+          logEvent("restart", `contradiction — attempt ${payload.attempt}/${payload.maxRetries}`);
         } else if (event === "done") {
-          console.log("\n[done] Map generation complete.");
+          logEvent("done", "map generation complete");
+          printMap(grid, width, height);
           resolve();
         } else if (event === "error") {
-          console.error(`\n[error] ${payload.message}`);
+          logEvent("error", payload.message);
           reject(new Error(payload.message));
         }
       }
