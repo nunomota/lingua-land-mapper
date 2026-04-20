@@ -4,8 +4,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node src/index.ts",
-    "test:flow": "ts-node scripts/test-flow.ts",
+    "dev": "tsx src/index.ts",
+    "test:flow": "tsx scripts/test-flow.ts",
     "start": "node dist/index.js"
   },
   "dependencies": {
@@ -19,6 +19,7 @@
     "@types/express": "^4.x",
     "@types/node": "^20.x",
     "ts-node": "^10.x",
+    "tsx": "^4.21.0",
     "typescript": "^5.x"
   }
 }
