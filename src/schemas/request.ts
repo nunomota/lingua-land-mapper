@@ -9,6 +9,7 @@ export const mapRequestSchema = z.object({
   dimensions: z
     .object({ width: z.number(), height: z.number() })
     .optional(),
+  smoothing: z.enum(["low", "high"]).optional(),
 });
 
 export type MapRequest = z.infer<typeof mapRequestSchema>;
