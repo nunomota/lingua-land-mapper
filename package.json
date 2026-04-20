@@ -5,6 +5,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "ts-node src/index.ts",
+    "test:flow": "ts-node scripts/test-flow.ts",
     "start": "node dist/index.js"
   },
   "dependencies": {
