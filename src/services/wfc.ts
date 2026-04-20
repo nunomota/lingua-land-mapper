@@ -94,12 +94,15 @@ function collapseWeights(
   const combined = new Map<string, number>();
   for (const id of cell.possibilities) {
     let weight = 0;
+    let valid = true;
     for (const n of collapsedNeighbours) {
       const nId = grid[n.y]![n.x]!.spriteId!;
       const row = matrix.get(nId);
-      weight += row?.get(id) ?? 0;
+      const w = row?.get(id) ?? 0;
+      if (w === 0) { valid = false; break; }
+      weight += w;
     }
-    combined.set(id, weight);
+    combined.set(id, valid ? weight : 0);
   }
   return combined;
 }
@@ -201,7 +204,7 @@ export async function runWFC({
 
         const before = current.possibilities.size;
         for (const id of Array.from(current.possibilities)) {
-          const hasValidTransition = collapsedNeighbours.some((n) => {
+          const hasValidTransition = collapsedNeighbours.every((n) => {
             const nId = grid[n.y]![n.x]!.spriteId!;
             const row = matrix.get(nId);
             return (row?.get(id) ?? 0) > 0;
