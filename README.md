@@ -6,6 +6,7 @@
   <p><em>Describe a world in words — get back a procedurally generated tile map, streamed in real time.</em></p>
   <img alt="version" src="https://img.shields.io/badge/version-0.1.0-blue" />
   <img alt="node" src="https://img.shields.io/badge/node-%3E%3D20-brightgreen" />
+  <img alt="license" src="https://img.shields.io/badge/license-MIT-green" />
 </div>
 
 ---
