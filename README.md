@@ -66,13 +66,13 @@ npm run dev
 
 ### Try the test script
 
-The repo ships with a ready-made client that generates a 10×10 forest-clearing map and visualises it in your terminal as it streams in:
+The repo ships with a ready-made client that generates a 10×10 forest-clearing map (grass, water, sand) and logs progress to your terminal:
 
 ```bash
 npm run test:flow
 ```
 
-Each collapsed tile appears as an emoji (🟩 grass · 🟦 water · 🟨 sand), uncollapsed cells show as ⬛, and the most recently placed tile is highlighted in red. The LLM's transition matrix is printed in full once reasoning completes.
+The LLM's transition matrix is printed once reasoning completes. Each cell collapse is logged as it streams in, and the final map is rendered as emoji once generation is done (🟩 grass · 🟦 water · 🟨 sand).
 
 ---
 
