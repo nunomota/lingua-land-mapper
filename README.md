@@ -1,23 +1,18 @@
-# Lingua Land Mapper
-
 <div align="center">
-  <img src="assets/splashart.png" alt="Lingua Land Mapper — sample generated maps" width="480" />
+  <h1>Lingua Land Mapper (LLM)</h1>
+  <img src="assets/splashart.png" alt="Lingua Land Mapper — sample generated maps" height="200" />
   <br /><br />
   <p><em>Describe a world in words — get back a procedurally generated tile map, streamed in real time.</em></p>
   <img alt="version" src="https://img.shields.io/badge/version-0.1.0-blue" />
   <img alt="node" src="https://img.shields.io/badge/node-%3E%3D20-brightgreen" />
   <img alt="license" src="https://img.shields.io/badge/license-MIT-green" />
+  <br /><br />
+  <a href="#how-it-works">How it works</a> •
+  <a href="#getting-started">Getting started</a> •
+  <a href="#how-to-use">How to use</a> •
+  <a href="#roadmap">Roadmap</a> •
+  <a href="#contributing">Contributing</a>
 </div>
-
----
-
-## Table of Contents
-
-- [How it works](#how-it-works)
-- [Getting started](#getting-started)
-- [How to use](#how-to-use)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
 
 ---
 
