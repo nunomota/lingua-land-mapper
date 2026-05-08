@@ -67,7 +67,7 @@ npm run dev
 cp .env.example .env
 
 docker build -t lingua-land-mapper .
-docker run -p 3000:3000 --env-file .env lingua-land-mapper
+docker run -p 3000:3000 --env-file .env --name lingua-land-mapper lingua-land-mapper
 ```
 
 ### Try the test script
