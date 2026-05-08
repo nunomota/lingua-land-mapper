@@ -50,22 +50,20 @@ Natural language description + tile sprites
 ## Getting started
 
 ```bash
-# Install dependencies
+# Copy and fill in the example env file
+cp .env.example .env
+```
+
+### Local
+
+```bash
 npm install
-
-# Add your OpenAI API key
-echo "OPENAI_API_KEY=sk-..." > .env
-
-# Start the server
 npm run dev
 ```
 
-### Using Docker
+### Docker
 
 ```bash
-# Copy and fill in the example env file
-cp .env.example .env
-
 docker build -t lingua-land-mapper .
 docker run -p 3000:3000 --env-file .env --name lingua-land-mapper lingua-land-mapper
 ```
