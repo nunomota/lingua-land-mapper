@@ -60,6 +60,16 @@ echo "OPENAI_API_KEY=sk-..." > .env
 npm run dev
 ```
 
+### Using Docker
+
+```bash
+# Copy and fill in the example env file
+cp .env.example .env
+
+docker build -t lingua-land-mapper .
+docker run -p 3000:3000 --env-file .env --name lingua-land-mapper lingua-land-mapper
+```
+
 ### Try the test script
 
 There's a ready-made client in the repo that generates a 10×10 forest-clearing map (grass, water, sand) and logs progress to your terminal:
