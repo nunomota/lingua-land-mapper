@@ -1,12 +1,20 @@
 ---
 title: API Reference
+
+<br>
+
 ---
 
-# API Reference
+<br>
 
 All endpoints follow a **subscribe-then-POST** pattern: open the SSE stream first with a unique `mapId`, then trigger generation via POST. Events are delivered over the open stream as generation progresses.
 
+
+<br>
+
 ---
+
+<br>
 
 ## Map generation
 
@@ -30,7 +38,12 @@ Opens a Server-Sent Events stream for a map generation job.
 | `done` | Generation complete | — |
 | `error` | Unrecoverable failure | `{ message: string }` |
 
+
+<br>
+
 ---
+
+<br>
 
 ### POST /map
 
@@ -74,7 +87,12 @@ curl -X POST http://localhost:3000/map \
   }'
 ```
 
+
+<br>
+
 ---
+
+<br>
 
 ## Props generation
 
@@ -100,7 +118,12 @@ Opens a Server-Sent Events stream for a props generation job.
 | `done` | Generation complete | — |
 | `error` | Unrecoverable failure | `{ message: string }` |
 
+
+<br>
+
 ---
+
+<br>
 
 ### POST /props
 
