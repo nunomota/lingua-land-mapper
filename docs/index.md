@@ -4,7 +4,11 @@ title: How it works
 
 *Describe a world in words — get back a procedurally generated tile map, streamed in real time.*
 
+<br>
+
 ---
+
+<br>
 
 Asking an LLM to place every tile on a grid doesn't work well. Models aren't great spatial reasoners — they'll produce inconsistent layouts and forget adjacency rules as soon as a map gets large.
 
@@ -33,7 +37,11 @@ Natural language description + tile sprites
           Tile map
 ```
 
+<br>
+
 ---
+
+<br>
 
 ## Getting started
 
@@ -66,7 +74,11 @@ npm run test:flow
 
 The LLM's transition matrix is printed once reasoning finishes. Each cell collapse is logged as it streams in, and the final map is rendered as emoji when generation is done (🟩 grass · 🟦 water · 🟨 sand).
 
+<br>
+
 ---
+
+<br>
 
 ## Next steps
 
