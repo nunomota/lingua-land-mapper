@@ -1,18 +1,10 @@
-<div align="center">
-  <h1>Lingua Land Mapper (LLM)</h1>
-  <img src="assets/splashart.png" alt="Lingua Land Mapper — sample generated maps" height="200" />
-  <br /><br />
-  <p><em>Describe a world in words — get back a procedurally generated tile map, streamed in real time.</em></p>
-  <img alt="version" src="https://img.shields.io/badge/version-0.1.0-blue" />
-  <img alt="node" src="https://img.shields.io/badge/node-%3E%3D20-brightgreen" />
-  <img alt="license" src="https://img.shields.io/badge/license-MIT-green" />
-  <a href="https://nunomota.github.io/lingua-land-mapper/"><img alt="docs" src="https://img.shields.io/badge/docs-GitHub%20Pages-blue" /></a>
-  <br /><br />
-  <a href="#how-it-works">How it works</a> •
-  <a href="#getting-started">Getting started</a> •
-  <a href="#roadmap">Roadmap</a> •
-  <a href="#contributing">Contributing</a>
-</div>
+---
+title: Lingua Land Mapper
+---
+
+# Lingua Land Mapper
+
+*Describe a world in words — get back a procedurally generated tile map, streamed in real time.*
 
 ---
 
@@ -78,21 +70,8 @@ npm run test:flow
 
 The LLM's transition matrix is printed once reasoning finishes. Each cell collapse is logged as it streams in, and the final map is rendered as emoji when generation is done (🟩 grass · 🟦 water · 🟨 sand).
 
-For the full endpoint reference, see the [API documentation](https://nunomota.github.io/lingua-land-mapper/api).
-
 ---
 
-## Roadmap
+## Next steps
 
-- **Prop generation** — objects, houses, trees, and other placeable elements
-- **Entity generation** — NPCs and monsters
-- **FX** — weather, clouds, and environmental effects
-
----
-
-## Contributing
-
-The best way to contribute right now is to open an issue — whether it's a bug you ran into, a feature you'd like to see, or just an idea worth discussing. Issue templates are available when you create one.
-
-- [Report a bug](../../issues/new?template=bug_report.md)
-- [Request a feature](../../issues/new?template=feature_request.md)
+See the [API reference](api) for the full endpoint documentation.
