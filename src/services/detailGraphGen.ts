@@ -1,7 +1,7 @@
 import { generateText, Output } from "ai";
 import { openai } from "@ai-sdk/openai";
 import type { ModelMessage } from "ai";
-import { propGraphOutputSchema } from "../schemas/propGraph.js";
+import { detailGraphOutputSchema } from "../schemas/detailGraph.js";
 import { normaliseMatrix } from "../utils/normalise.js";
 
 export const EMPTY = "__empty__";
@@ -151,25 +151,25 @@ function validateOverlapRules(
   return errors;
 }
 
-export class PropGraphGenError extends Error {
+export class DetailGraphGenError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "PropGraphGenError";
+    this.name = "DetailGraphGenError";
   }
 }
 
-export type PropGraph = {
+export type DetailGraph = {
   reasoning: string;
   adjacencyMatrix: Map<string, Map<string, number>>;
   overlapRules: Map<string, Set<string>>;
 };
 
-export async function generatePropGraph(
+export async function generateDetailGraph(
   query: string,
   availableDetails: Detail[],
   tileSprites: TileSprite[],
   smoothing?: "low" | "high"
-): Promise<PropGraph> {
+): Promise<DetailGraph> {
   const detailsWithEmpty: Detail[] = [
     { id: EMPTY, description: "an empty cell — no detail is placed here" },
     ...availableDetails,
@@ -192,9 +192,9 @@ export async function generatePropGraph(
       model: openai("gpt-4o-mini"),
       system: SYSTEM_PROMPT,
       messages,
-      experimental_output: Output.object({ schema: propGraphOutputSchema }),
+      experimental_output: Output.object({ schema: detailGraphOutputSchema }),
     }).catch((err: unknown) => {
-      throw new PropGraphGenError(
+      throw new DetailGraphGenError(
         `LLM call failed: ${err instanceof Error ? err.message : String(err)}`
       );
     });
@@ -244,7 +244,7 @@ export async function generatePropGraph(
     messages.push({ role: "user", content: errorSummary });
   }
 
-  throw new PropGraphGenError(
-    `Prop graph generation failed after ${maxAttempts} attempts`
+  throw new DetailGraphGenError(
+    `Detail graph generation failed after ${maxAttempts} attempts`
   );
 }

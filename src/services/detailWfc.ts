@@ -1,20 +1,20 @@
 import { EventEmitter } from "events";
 import * as registry from "../utils/registry.js";
-import { EMPTY } from "./propGraphGen.js";
+import { EMPTY } from "./detailGraphGen.js";
 
-type PropCell = {
+type DetailCell = {
   collapsed: boolean;
   detailId: string | null;
   possibilities: Set<string>;
 };
 
-type PropGrid = PropCell[][];
+type DetailGrid = DetailCell[][];
 
-function initPropGrid(
+function initDetailGrid(
   tileMap: string[][],
   allDetailIds: string[],
   overlapRules: Map<string, Set<string>>
-): PropGrid {
+): DetailGrid {
   return Array.from({ length: tileMap.length }, (_, y) =>
     Array.from({ length: tileMap[0]!.length }, (_, x) => ({
       collapsed: false,
@@ -79,10 +79,10 @@ function getNeighbours(
 }
 
 function collapseWeights(
-  cell: PropCell,
+  cell: DetailCell,
   x: number,
   y: number,
-  grid: PropGrid,
+  grid: DetailGrid,
   width: number,
   height: number,
   matrix: Map<string, Map<string, number>>
@@ -112,7 +112,7 @@ function collapseWeights(
   return combined;
 }
 
-export async function runPropWFC({
+export async function runDetailWFC({
   tileMap,
   adjacencyMatrix,
   overlapRules,
@@ -133,7 +133,7 @@ export async function runPropWFC({
   const total = width * height;
 
   for (let attempt = 0; attempt < maxRetries; attempt++) {
-    const grid = initPropGrid(tileMap, allDetailIds, overlapRules);
+    const grid = initDetailGrid(tileMap, allDetailIds, overlapRules);
     let collapsedCount = 0;
     let contradiction = false;
 
@@ -147,7 +147,7 @@ export async function runPropWFC({
     seedCell.detailId = seedDetailId;
     seedCell.possibilities = new Set([seedDetailId]);
     collapsedCount++;
-    emitter.emit("propCell", { x: seedX, y: seedY, detailId: seedDetailId === EMPTY ? null : seedDetailId });
+    emitter.emit("detailCell", { x: seedX, y: seedY, detailId: seedDetailId === EMPTY ? null : seedDetailId });
 
     const frontierMap = new Map<string, { x: number; y: number }>();
     for (const n of getNeighbours(seedX, seedY, width, height)) {
@@ -184,7 +184,7 @@ export async function runPropWFC({
       cell.detailId = detailId;
       cell.possibilities = new Set([detailId]);
       collapsedCount++;
-      emitter.emit("propCell", { x, y, detailId: detailId === EMPTY ? null : detailId });
+      emitter.emit("detailCell", { x, y, detailId: detailId === EMPTY ? null : detailId });
 
       // Update frontier
       frontierMap.delete(`${x},${y}`);
@@ -251,7 +251,7 @@ export async function runPropWFC({
   }
 
   emitter.emit("error", {
-    message: `Prop generation failed after ${maxRetries} attempts`,
+    message: `Detail generation failed after ${maxRetries} attempts`,
   });
   registry.remove(mapId);
 }
