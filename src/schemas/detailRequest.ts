@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const propRequestSchema = z.object({
+export const detailRequestSchema = z.object({
   mapId: z.string(),
   query: z.string(),
   availableDetails: z
@@ -13,4 +13,4 @@ export const propRequestSchema = z.object({
   smoothing: z.enum(["low", "high"]).optional(),
 });
 
-export type PropRequest = z.infer<typeof propRequestSchema>;
+export type DetailRequest = z.infer<typeof detailRequestSchema>;

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const propGraphOutputSchema = z.object({
+export const detailGraphOutputSchema = z.object({
   reasoning: z
     .string()
     .describe(
@@ -37,4 +37,4 @@ export const propGraphOutputSchema = z.object({
   ),
 });
 
-export type PropGraphOutput = z.infer<typeof propGraphOutputSchema>;
+export type DetailGraphOutput = z.infer<typeof detailGraphOutputSchema>;
