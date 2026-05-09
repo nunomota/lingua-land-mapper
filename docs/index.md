@@ -1,14 +1,10 @@
 ---
-title: Lingua Land Mapper
+title: How it works
 ---
-
-# Lingua Land Mapper
 
 *Describe a world in words — get back a procedurally generated tile map, streamed in real time.*
 
 ---
-
-## How it works
 
 Asking an LLM to place every tile on a grid doesn't work well. Models aren't great spatial reasoners — they'll produce inconsistent layouts and forget adjacency rules as soon as a map gets large.
 
