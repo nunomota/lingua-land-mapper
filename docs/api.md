@@ -2,8 +2,6 @@
 title: API Reference
 ---
 
-# API Reference
-
 All endpoints follow a **subscribe-then-POST** pattern: open the SSE stream first with a unique `mapId`, then trigger generation via POST. Events are delivered over the open stream as generation progresses.
 
 ---
