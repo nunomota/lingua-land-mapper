@@ -3,7 +3,7 @@ import * as registry from "../utils/registry.js";
 
 const router = Router();
 
-const SSE_EVENTS = ["propGraph", "propCell", "restart", "done", "error"] as const;
+const SSE_EVENTS = ["detailGraph", "detailCell", "restart", "done", "error"] as const;
 
 router.get("/stream", (req: Request, res: Response) => {
   const { mapId } = req.query;

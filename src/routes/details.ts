@@ -1,12 +1,12 @@
 import { Router, Request, Response } from "express";
-import { propRequestSchema } from "../schemas/propRequest.js";
+import { detailRequestSchema } from "../schemas/detailRequest.js";
 import * as registry from "../utils/registry.js";
-import { generatePropGraph, PropGraphGenError } from "../services/propGraphGen.js";
-import { runPropWFC } from "../services/propWfc.js";
+import { generateDetailGraph, DetailGraphGenError } from "../services/detailGraphGen.js";
+import { runDetailWFC } from "../services/detailWfc.js";
 
 const router = Router();
 
-async function generateProps(
+async function generateDetails(
   mapId: string,
   params: {
     query: string;
@@ -20,7 +20,7 @@ async function generateProps(
   if (!emitter) return;
 
   try {
-    const { reasoning, adjacencyMatrix, overlapRules } = await generatePropGraph(
+    const { reasoning, adjacencyMatrix, overlapRules } = await generateDetailGraph(
       params.query,
       params.availableDetails,
       params.tileSprites,
@@ -37,9 +37,9 @@ async function generateProps(
       overlapRecord[detailId] = [...tileIds];
     }
 
-    emitter.emit("propGraph", { reasoning, adjacencyMatrix: matrixRecord, overlapRules: overlapRecord });
+    emitter.emit("detailGraph", { reasoning, adjacencyMatrix: matrixRecord, overlapRules: overlapRecord });
 
-    await runPropWFC({
+    await runDetailWFC({
       tileMap: params.tileMap,
       adjacencyMatrix,
       overlapRules,
@@ -48,7 +48,7 @@ async function generateProps(
     });
   } catch (err) {
     const message =
-      err instanceof PropGraphGenError
+      err instanceof DetailGraphGenError
         ? err.message
         : `Unexpected error: ${err instanceof Error ? err.message : String(err)}`;
     const em = registry.get(mapId);
@@ -60,7 +60,7 @@ async function generateProps(
 }
 
 router.post("/", (req: Request, res: Response) => {
-  const parsed = propRequestSchema.safeParse(req.body);
+  const parsed = detailRequestSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.flatten() });
     return;
@@ -70,14 +70,14 @@ router.post("/", (req: Request, res: Response) => {
 
   if (!registry.get(mapId)) {
     res.status(400).json({
-      error: "No active stream for mapId. Subscribe to /props/stream first.",
+      error: "No active stream for mapId. Subscribe to /details/stream first.",
     });
     return;
   }
 
   res.status(202).json({ mapId });
 
-  void generateProps(mapId, { query, availableDetails, tileMap, tileSprites, smoothing });
+  void generateDetails(mapId, { query, availableDetails, tileMap, tileSprites, smoothing });
 });
 
 export default router;
