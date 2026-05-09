@@ -2,7 +2,7 @@ import "dotenv/config";
 
 const BASE_URL = "http://localhost:3000";
 const MAP_ID = `test-map-${Date.now()}`;
-const PROPS_ID = `test-props-${Date.now()}`;
+const DETAILS_ID = `test-details-${Date.now()}`;
 
 const MAP_PAYLOAD = {
   mapId: MAP_ID,
@@ -15,7 +15,7 @@ const MAP_PAYLOAD = {
   dimensions: { width: 10, height: 10 },
 };
 
-const PROPS_QUERY = "Mossy patches and scattered pebbles across the clearing";
+const DETAILS_QUERY = "Mossy patches and scattered pebbles across the clearing";
 const AVAILABLE_DETAILS = [
   { id: "moss",   description: "A patch of soft green moss" },
   { id: "pebble", description: "A small grey pebble" },
@@ -60,18 +60,18 @@ function printMatrix(label: string, matrix: Record<string, Record<string, number
 
 function printMap(
   tileGrid: Record<string, string>,
-  propGrid: Record<string, string | null> | null,
+  detailGrid: Record<string, string | null> | null,
   width: number,
   height: number
 ) {
-  const label = propGrid ? "Final map + props:" : "Final map:";
+  const label = detailGrid ? "Final map + details:" : "Final map:";
   console.log(`\n  ${label}\n`);
   for (let y = 0; y < height; y++) {
     let row = "  ";
     for (let x = 0; x < width; x++) {
       const key = `${x},${y}`;
       const spriteId = tileGrid[key] ?? "?";
-      const detailId = propGrid?.[key] ?? null;
+      const detailId = detailGrid?.[key] ?? null;
       if (detailId) {
         row += DETAIL_ICONS[detailId] ?? `[${detailId}]`;
       } else {
@@ -198,29 +198,29 @@ async function runMapPhase(): Promise<{
   return { tileGrid, tileMap };
 }
 
-async function runPropsPhase(
+async function runDetailsPhase(
   tileMap: string[][],
   tileGrid: Record<string, string>
 ): Promise<void> {
   const width = tileMap[0]!.length;
   const height = tileMap.length;
-  const propGrid: Record<string, string | null> = {};
+  const detailGrid: Record<string, string | null> = {};
 
-  console.log(`\n[props] mapId: ${PROPS_ID}`);
-  console.log(`[props] Connecting to SSE stream...`);
+  console.log(`\n[details] mapId: ${DETAILS_ID}`);
+  console.log(`[details] Connecting to SSE stream...`);
 
-  const listen = await connectSse(`${BASE_URL}/props/stream?mapId=${PROPS_ID}`);
+  const listen = await connectSse(`${BASE_URL}/details/stream?mapId=${DETAILS_ID}`);
 
   await new Promise<void>((resolve, reject) => {
     listen(
       {
-        propGraph(payload) {
+        detailGraph(payload) {
           const p = payload as {
             reasoning: string;
             adjacencyMatrix: Record<string, Record<string, number>>;
             overlapRules: Record<string, string[]>;
           };
-          logEvent("propGraph", `reasoning: "${p.reasoning}"`);
+          logEvent("detailGraph", `reasoning: "${p.reasoning}"`);
           printMatrix("Detail adjacency matrix", p.adjacencyMatrix);
           console.log("  Overlap rules:");
           for (const [id, tiles] of Object.entries(p.overlapRules)) {
@@ -228,11 +228,11 @@ async function runPropsPhase(
           }
           console.log();
         },
-        propCell(payload) {
+        detailCell(payload) {
           const p = payload as { x: number; y: number; detailId: string | null };
-          propGrid[`${p.x},${p.y}`] = p.detailId;
+          detailGrid[`${p.x},${p.y}`] = p.detailId;
           if (p.detailId) {
-            logEvent("propCell", `(${p.x}, ${p.y}) → ${p.detailId}`);
+            logEvent("detailCell", `(${p.x}, ${p.y}) → ${p.detailId}`);
           }
         },
         restart(payload) {
@@ -240,7 +240,7 @@ async function runPropsPhase(
           logEvent("restart", `contradiction — attempt ${p.attempt}/${p.maxRetries}`);
         },
         done() {
-          logEvent("done", "prop generation complete");
+          logEvent("done", "detail generation complete");
           resolve();
         },
         error(payload) {
@@ -253,37 +253,37 @@ async function runPropsPhase(
       reject
     );
 
-    const propsPayload = {
-      mapId: PROPS_ID,
-      query: PROPS_QUERY,
+    const detailsPayload = {
+      mapId: DETAILS_ID,
+      query: DETAILS_QUERY,
       availableDetails: AVAILABLE_DETAILS,
       tileMap,
       tileSprites: MAP_PAYLOAD.availableSprites,
     };
 
-    console.log("[props] Stream open. Triggering POST /props...\n");
-    fetch(`${BASE_URL}/props`, {
+    console.log("[details] Stream open. Triggering POST /details...\n");
+    fetch(`${BASE_URL}/details`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(propsPayload),
+      body: JSON.stringify(detailsPayload),
     }).then((res) => {
       if (!res.ok) {
         res.json().then((body) => {
-          console.error("[props] POST failed:", body);
+          console.error("[details] POST failed:", body);
           process.exit(1);
         }).catch(reject);
       } else {
-        console.log(`[props] 202 accepted — waiting for events...\n`);
+        console.log(`[details] 202 accepted — waiting for events...\n`);
       }
     }).catch(reject);
   });
 
-  printMap(tileGrid, propGrid, width, height);
+  printMap(tileGrid, detailGrid, width, height);
 }
 
 async function main() {
   const { tileGrid, tileMap } = await runMapPhase();
-  await runPropsPhase(tileMap, tileGrid);
+  await runDetailsPhase(tileMap, tileGrid);
 }
 
 main().catch((err) => {
