@@ -6,10 +6,10 @@
   <img alt="version" src="https://img.shields.io/badge/version-0.1.0-blue" />
   <img alt="node" src="https://img.shields.io/badge/node-%3E%3D20-brightgreen" />
   <img alt="license" src="https://img.shields.io/badge/license-MIT-green" />
+  <a href="https://nunomota.github.io/lingua-land-mapper/"><img alt="docs" src="https://img.shields.io/badge/docs-GitHub%20Pages-blue" /></a>
   <br /><br />
   <a href="#how-it-works">How it works</a> •
   <a href="#getting-started">Getting started</a> •
-  <a href="#how-to-use">How to use</a> •
   <a href="#roadmap">Roadmap</a> •
   <a href="#contributing">Contributing</a>
 </div>
@@ -78,61 +78,15 @@ npm run test:flow
 
 The LLM's transition matrix is printed once reasoning finishes. Each cell collapse is logged as it streams in, and the final map is rendered as emoji when generation is done (🟩 grass · 🟦 water · 🟨 sand).
 
----
-
-## How to use
-
-Open two terminals.
-
-**Terminal 1 — subscribe to the event stream:**
-```bash
-curl -N "http://localhost:3000/map/stream?mapId=my-map"
-```
-
-**Terminal 2 — trigger generation:**
-```bash
-curl -X POST http://localhost:3000/map \
-  -H "Content-Type: application/json" \
-  -d '{
-    "mapId": "my-map",
-    "query": "A forest clearing with a small pond",
-    "availableSprites": [
-      { "id": "grass", "description": "Green grass" },
-      { "id": "water", "description": "Blue water" },
-      { "id": "tree",  "description": "Dense tree" },
-      { "id": "sand",  "description": "Sandy shore" }
-    ]
-  }'
-```
-
-The stream emits the following events:
-
-| Event | When | Payload |
-|-------|------|---------|
-| `graph` | After LLM reasoning | Transition matrix + reasoning text |
-| `cell` | Each collapsed tile | `{ x, y, spriteId }` |
-| `restart` | WFC contradiction, retrying | `{ attempt, maxRetries }` |
-| `done` | Generation complete | — |
-| `error` | Unrecoverable failure | `{ message }` |
-
-### Request fields
-
-`POST /map` accepts a JSON body:
-
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `mapId` | string | ✓ | — | Unique ID shared with the stream subscriber |
-| `query` | string | ✓ | — | Natural language description of the map |
-| `availableSprites` | `{ id, description }[]` | ✓ | — | Tile types the map can use |
-| `dimensions` | `{ width, height }` | | `15×15` | Grid size in tiles |
-| `smoothing` | `"low"` \| `"high"` | | none | Prune low-weight transitions (stricter layouts) |
+For the full endpoint reference, see the [API documentation](https://nunomota.github.io/lingua-land-mapper/api).
 
 ---
 
 ## Roadmap
 
-- **Map editing** — tweak and refine an existing generated map tile by tile
-- **Entity generation** — populate maps with objects, NPCs, and other entities
+- **Prop generation** — objects, houses, trees, and other placeable elements
+- **Entity generation** — NPCs and monsters
+- **FX** — weather, clouds, and environmental effects
 
 ---
 
